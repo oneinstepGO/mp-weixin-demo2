@@ -26,3 +26,6 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  data:
+    redis:
+      url: redis://localhost:6379

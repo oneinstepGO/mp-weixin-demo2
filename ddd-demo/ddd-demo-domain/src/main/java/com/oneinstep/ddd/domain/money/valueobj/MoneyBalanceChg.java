@@ -27,14 +27,4 @@ public class MoneyBalanceChg {
      */
     private BigDecimal chgFrozenAmount;
 
-    /**
-     * 今日卖出股票金额
-     */
-    private BigDecimal chgMoneyInToday;
-
-    /**
-     * 今日买入股票金额
-     */
-    private BigDecimal chgMoneyOutToday;
-
 }

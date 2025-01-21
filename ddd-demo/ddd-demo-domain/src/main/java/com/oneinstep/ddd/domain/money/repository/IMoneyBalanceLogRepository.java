@@ -19,9 +19,7 @@ public interface IMoneyBalanceLogRepository {
     /**
      * 根据来源类型、来源ID、来源子ID查询资金变动记录
      *
-     * @param fromSourceType  来源类型
-     * @param fromSourceId    来源ID
-     * @param fromSourceSubId 来源子ID
+     * @param fromSource  来源类型
      * @return 资金变动记录
      */
     MoneyBalanceLog findBy3F(FromSource fromSource);
@@ -41,4 +39,6 @@ public interface IMoneyBalanceLogRepository {
      * @return 保存结果
      */
     boolean saveLogBatch(List<MoneyBalanceLog> moneyBalanceLogs);
+
+    void deleteAll();
 }

@@ -12,12 +12,8 @@ import java.util.Objects;
 @Component
 public class AccountFacade {
 
-    // @DubboReference
-    // private AccountDubboService accountDubboService;
-
     public AccountDTO getAccountByAssetAccountId(Long assetAccountId) {
         // 从帐户RPC中获取账户信息 but mock here
-        // accountDubboService.getAccountByAssetAccountId(assetAccountId);
         if (Objects.equals(assetAccountId, 1L)) {
             AccountDTO accountDTO = new AccountDTO();
             accountDTO.setAccountId(1L);
@@ -38,7 +34,6 @@ public class AccountFacade {
 
     public AccountDTO getAccountByAccountId(Long accountId) {
         // 从帐户RPC中获取账户信息 but mock here
-        // accountDubboService.getAccountByAssetAccountId(assetAccountId);
         if (Objects.equals(accountId, 1L)) {
             AccountDTO accountDTO = new AccountDTO();
             accountDTO.setAccountId(1L);

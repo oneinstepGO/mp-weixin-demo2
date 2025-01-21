@@ -27,4 +27,8 @@ public class MoneyBalanceOperationRepositoryImpl implements IMoneyBalanceOperati
         return jpaMoneyBalanceOperationRepository.save(moneyBalanceOperation);
     }
 
+    @Override
+    public void deleteAll() {
+        jpaMoneyBalanceOperationRepository.deleteAll();
+    }
 }

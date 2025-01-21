@@ -38,4 +38,8 @@ public class MoneyBalanceLogRepositoryImpl implements IMoneyBalanceLogRepository
         return jpaMoneyBalanceLogRepository.saveAll(moneyBalanceLogs) != null;
     }
 
+    @Override
+    public void deleteAll() {
+        jpaMoneyBalanceLogRepository.deleteAll();
+    }
 }

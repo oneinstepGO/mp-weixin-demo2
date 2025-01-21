@@ -16,10 +16,10 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="ddd-demo-infrastructure" />
-        <module name="ddd-demo-application" />
         <module name="ddd-demo-common" />
         <module name="ddd-demo-facade" />
+        <module name="ddd-demo-application" />
+        <module name="ddd-demo-infrastructure" />
         <module name="ddd-demo-api" />
         <module name="ddd-demo-domain" />
       </profile>

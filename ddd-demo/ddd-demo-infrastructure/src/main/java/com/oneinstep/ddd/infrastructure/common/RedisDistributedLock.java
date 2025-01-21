@@ -2,9 +2,9 @@ package com.oneinstep.ddd.infrastructure.common;
 
 import cn.hutool.core.lang.Pair;
 import com.oneinstep.ddd.common.util.lock.IDistributedLock;
-import com.oneinstep.ddd.common.util.spring.SpringContextUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Supplier;
@@ -15,6 +15,13 @@ import java.util.function.Supplier;
 @Component
 public class RedisDistributedLock<T> implements IDistributedLock<T> {
 
+    private final RedissonClient redissonClient;
+
+    @Autowired
+    public RedisDistributedLock(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
+
     /**
      * 加锁
      *
@@ -24,7 +31,6 @@ public class RedisDistributedLock<T> implements IDistributedLock<T> {
      */
     @Override
     public T lock(String lockKey, Supplier<T> supplier) {
-        RedissonClient redissonClient = SpringContextUtils.getBean(RedissonClient.class);
         RLock lock = redissonClient.getLock(lockKey);
         lock.lock();
         try {
@@ -43,7 +49,6 @@ public class RedisDistributedLock<T> implements IDistributedLock<T> {
      */
     @Override
     public Pair<Boolean, T> tryLock(String lockKey, Supplier<T> supplier) {
-        RedissonClient redissonClient = SpringContextUtils.getBean(RedissonClient.class);
         RLock lock = redissonClient.getLock(lockKey);
         boolean success = lock.tryLock();
         if (success) {

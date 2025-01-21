@@ -22,7 +22,8 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "money_balance")
+@Table(name = "money_balance", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_money_balance", columnNames = {"asset_account_id", "money_type"})})
 public class MoneyBalance {
 
     /**
@@ -73,14 +74,6 @@ public class MoneyBalance {
      */
     @Column(name = "version", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long version;
-
-    public MoneyBalance() {
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
-        this.version = 0L;
-        this.currentBalance = BigDecimal.ZERO;
-        this.frozenAmount = BigDecimal.ZERO;
-    }
 
     /**
      * 存钱

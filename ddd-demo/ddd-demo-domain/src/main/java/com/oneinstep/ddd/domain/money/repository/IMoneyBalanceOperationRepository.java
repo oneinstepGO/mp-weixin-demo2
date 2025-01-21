@@ -8,9 +8,7 @@ public interface IMoneyBalanceOperationRepository {
     /**
      * 根据来源类型、来源ID、来源子ID查询资金变动记录
      *
-     * @param fromSourceType  来源类型
-     * @param fromSourceId    来源ID
-     * @param fromSourceSubId 来源子ID
+     * @param fromSource  来源
      * @return 资金变动记录
      */
     MoneyBalanceOperation findBy3F(FromSource fromSource);
@@ -22,4 +20,6 @@ public interface IMoneyBalanceOperationRepository {
      * @return 保存结果
      */
     MoneyBalanceOperation save(MoneyBalanceOperation moneyBalanceOperation);
+
+    void deleteAll();
 }

@@ -11,3 +11,14 @@ dubbo:
   protocol:
     name: dubbo
     port: -1
+
+spring:
+  data:
+    redis:
+      redisson:
+        address: redis://localhost:6379
+
+logging:
+  level:
+    root: info
+    sql: debug

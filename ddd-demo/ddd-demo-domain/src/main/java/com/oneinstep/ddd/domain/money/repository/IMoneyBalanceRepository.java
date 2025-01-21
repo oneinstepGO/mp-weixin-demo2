@@ -37,4 +37,10 @@ public interface IMoneyBalanceRepository {
      * @return 保存结果
      */
     boolean saveBatch(List<MoneyBalance> moneyBalances);
+
+    /**
+     * 删除所有资金余额
+     */
+    void deleteAll();
+
 }

@@ -168,7 +168,7 @@ public class MoneyBalanceLog {
 
         if (moneyBalanceLog.getChgFrozenAmount().compareTo(BigDecimal.ZERO) < 0) {
             moneyBalanceLog.addFlagBit(MoneyBalanceFlagBitConstants.DECREASE_FREEZE_AMOUNT);
-        } else if (moneyBalanceLog.getChgFrozenAmount().compareTo(BigDecimal.ZERO) < 0) {
+        } else if (moneyBalanceLog.getChgFrozenAmount().compareTo(BigDecimal.ZERO) > 0) {
             moneyBalanceLog.addFlagBit(MoneyBalanceFlagBitConstants.INCREASE_FREEZE_AMOUNT);
         }
 

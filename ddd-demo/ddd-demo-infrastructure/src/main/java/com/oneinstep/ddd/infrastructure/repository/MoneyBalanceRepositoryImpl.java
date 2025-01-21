@@ -5,6 +5,7 @@ import com.oneinstep.ddd.domain.money.repository.IMoneyBalanceRepository;
 import com.oneinstep.ddd.domain.money.valueobj.MoneyBalanceChg;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,8 +21,20 @@ public class MoneyBalanceRepositoryImpl implements IMoneyBalanceRepository {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean batchIncrementalUpdate(List<MoneyBalanceChg> moneyBalanceChgs) {
-        int rows = jpaMoneyBalanceRepository.incrementalUpdateMoneyBalances(moneyBalanceChgs);
+        if (moneyBalanceChgs == null || moneyBalanceChgs.isEmpty()) {
+            return false;
+        }
+        int rows = 0;
+
+        for (MoneyBalanceChg moneyBalanceChg : moneyBalanceChgs) {
+            int incrementalUpdate = jpaMoneyBalanceRepository.incrementalUpdate(moneyBalanceChg);
+            if (incrementalUpdate > 0) {
+                rows++;
+            }
+        }
+
         return rows == moneyBalanceChgs.size();
     }
 
@@ -36,5 +49,9 @@ public class MoneyBalanceRepositoryImpl implements IMoneyBalanceRepository {
         return saveAll.size() == moneyBalances.size();
     }
 
+    @Override
+    public void deleteAll() {
+        jpaMoneyBalanceRepository.deleteAll();
+    }
 
 }

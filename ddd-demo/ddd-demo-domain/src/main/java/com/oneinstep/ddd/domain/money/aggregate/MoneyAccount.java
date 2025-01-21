@@ -213,9 +213,7 @@ public class MoneyAccount {
 
         // 如果变动金额都为 0 则返回 null
         if (chg.getChgCurrentBalance().compareTo(BigDecimal.ZERO) == 0
-                && chg.getChgFrozenAmount().compareTo(BigDecimal.ZERO) == 0
-                && chg.getChgMoneyInToday().compareTo(BigDecimal.ZERO) == 0
-                && chg.getChgMoneyOutToday().compareTo(BigDecimal.ZERO) == 0) {
+                && chg.getChgFrozenAmount().compareTo(BigDecimal.ZERO) == 0) {
             return null;
         }
         return chg;
