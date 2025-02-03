@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="virtual-thread" />
       </profile>
       <profile name="Annotation profile for ddd-demo" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -14,12 +15,11 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
+        <module name="ddd-demo-infrastructure" />
+        <module name="ddd-demo-application" />
         <module name="ddd-demo-common" />
         <module name="ddd-demo-facade" />
-        <module name="ddd-demo-application" />
-        <module name="ddd-demo-infrastructure" />
         <module name="ddd-demo-api" />
         <module name="ddd-demo-domain" />
       </profile>
