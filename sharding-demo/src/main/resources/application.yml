@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    # 使用 ShardingSphere 驱动
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # 配置 ShardingSphere 配置文件路径
+    url: jdbc:shardingsphere:classpath:shardingsphere.yml
+    # 配置 HikariCP 数据源
+    hikari:
+      # 最小空闲连接数
+      minimum-idle: 5
+      # 最大连接池大小
+      maximum-pool-size: 20
+      # 空闲连接超时时间
+      idle-timeout: 60000
+      # 自动提交
+      auto-commit: true
+      # 连接测试查询
+      connection-test-query: SELECT 1
+
+# MyBatis-Flex 配置
+mybatis-flex:
+  global-config:
+    # 逻辑删除字段
+    logic-delete-column: deleted
+    # 打印 Banner
+    print-banner: false
+
+server:
+  port: 9090
+
+logging:
+  level:
+    root: info
+    com.oneinstep.demo: debug

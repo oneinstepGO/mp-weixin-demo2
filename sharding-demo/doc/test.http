@@ -1,0 +1,58 @@
+### 插入测试数据
+POST http://localhost:9090/event-logs/batchInsertTest
+
+
+### 按时间进行范围查询
+GET http://localhost:9090/event-logs/query?
+    startTime=2025-01-01&endTime=2025-01-04
+
+### 按时间进行范围删除
+DELETE http://localhost:9090/event-logs/delete?startTime=2025-01-01&endTime=2025-01-02
+
+
+### 1. 根据ID查询
+GET http://localhost:9090/event-logs/442717175810473984
+
+### 2. 批量查询
+POST http://localhost:9090/event-logs/batch-query
+Content-Type: application/json
+
+[
+  1,
+  2,
+  3,
+  4,
+  5
+]
+
+
+### 3. 更新单条记录
+PUT http://localhost:9090/event-logs/123
+Content-Type: application/json
+
+{
+  "eventType": 2,
+  "eventContent": "Updated content"
+}
+
+
+### 4. 批量更新
+PUT http://localhost:9090/event-logs/batch
+Content-Type: application/json
+
+[
+  {
+    "id": 1,
+    "eventType": 2,
+    "eventContent": "Batch update 1"
+  },
+  {
+    "id": 2,
+    "eventType": 2,
+    "eventContent": "Batch update 2"
+  }
+]
+
+
+###. 条件查询
+GET http://localhost:9090/event-logs/search?eventType=1&startTime=2025-01-01&endTime=2025-03-31

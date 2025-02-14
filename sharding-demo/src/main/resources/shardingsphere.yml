@@ -1,0 +1,49 @@
+# 数据源配置
+dataSources:
+  # 配置默认数据源 ds0
+  ds0:
+    # 使用 HikariCP 作为数据源实现
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    # MySQL驱动类
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # 数据库连接URL
+    jdbcUrl: jdbc:mysql://localhost:3306/sharding_demo
+    # 数据库用户名
+    username: root
+    # 数据库密码
+    password: root123!
+
+# 规则配置
+rules:
+  # 分片规则配置
+  - !SHARDING
+    tables:
+      # 逻辑表名
+      event_log:
+        # 真实数据节点，指定数据源.实际表名的格式
+        actualDataNodes: ds0.event_log_${202501..202812}
+        # 分表策略配置
+        tableStrategy:
+          # 复杂分片策略
+          complex:
+            # 分片键(分片字段)
+            shardingColumns: create_time,id
+            # 分片算法名称
+            shardingAlgorithmName: event-log-complex-sharding
+
+    # 分片算法配置
+    shardingAlgorithms:
+      event-log-complex-sharding:
+        # 分片算法类型
+        type: CLASS_BASED
+        # 分片算法属性配置
+        props:
+          # 分片策略 复合分片
+          strategy: COMPLEX
+          # 分片算法类
+          algorithmClassName: com.oneinstep.demo.sharding.algorithm.EventLogComplexShardingAlgorithm
+
+# 属性配置
+props:
+  # 是否在日志中打印SQL
+  sql-show: true
