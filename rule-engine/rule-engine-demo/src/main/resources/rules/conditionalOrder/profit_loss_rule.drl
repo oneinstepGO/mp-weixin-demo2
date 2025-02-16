@@ -1,0 +1,113 @@
+package rules.conditionalOrder;
+
+import com.oneinstep.rule.demo.model.trade.OrderStatus;
+import java.time.LocalDateTime;
+import com.oneinstep.rule.demo.model.trade.ConditionalOrder;
+
+/**
+ * 止盈规则
+ * 当盈利比例大于等于设定的止盈比例时触发
+ * salience=100 表示优先级，数字越大优先级越高
+ */
+rule "take_profit_trigger"
+    salience 100
+    no-loop true
+when
+    // 匹配条件单对象:
+    // 1. 状态为PENDING(待触发)
+    // 2. 当前盈利比例大于等于设定的止盈比例
+    $order: ConditionalOrder(
+        status == OrderStatus.PENDING,
+        getProfitRate() >= takeProfitRate
+    )
+then
+    // 更新订单状态为已触发
+    $order.setStatus(OrderStatus.TRIGGERED);
+    // 添加触发原因，包含成本价、当前价和盈利比例
+    $order.addTriggerReason(String.format(
+        "触发止盈: 成本价=%.2f, 当前价=%.2f, 盈利比例=%.2f%%",
+        $order.getCostPrice(),
+        $order.getCurrentPrice(),
+        $order.getProfitRate() * 100
+    ));
+    // 更新订单更新时间
+    $order.setUpdateTime(LocalDateTime.now());
+end
+
+/**
+ * 止损规则
+ * 当亏损比例大于等于设定的止损比例时触发
+ * salience=100 表示与止盈规则同优先级
+ */
+rule "stop_loss_trigger"
+    salience 100
+    no-loop true
+when
+    // 匹配条件单对象:
+    // 1. 状态为PENDING(待触发)
+    // 2. 当前亏损比例大于等于设定的止损比例
+    $order: ConditionalOrder(
+        status == OrderStatus.PENDING,
+        getProfitRate() <= -stopLossRate
+    )
+then
+    // 更新订单状态为已触发
+    $order.setStatus(OrderStatus.TRIGGERED);
+    // 添加触发原因，包含成本价、当前价和亏损比例
+    $order.addTriggerReason(String.format(
+        "触发止损: 成本价=%.2f, 当前价=%.2f, 亏损比例=%.2f%%",
+        $order.getCostPrice(),
+        $order.getCurrentPrice(),
+        Math.abs($order.getProfitRate() * 100)
+    ));
+    // 更新订单更新时间
+    $order.setUpdateTime(LocalDateTime.now());
+end
+
+/**
+ * 交易时间检查规则
+ * 检查当前是否在交易时间内
+ * salience=110 表示优先级高于止盈止损规则
+ */
+rule "trading_hours_check"
+    salience 110
+    no-loop true
+when
+    // 匹配待触发的条件单
+    $order: ConditionalOrder(status == OrderStatus.PENDING)
+    // 调用isNotTradingHours()函数检查是否非交易时间
+    eval(isNotTradingHours())
+then
+    // 保持订单状态为待触发
+    $order.setStatus(OrderStatus.PENDING);
+    // 添加非交易时间的说明
+    $order.addTriggerReason("非交易时间，暂不触发");
+end
+
+/**
+ * 判断当前是否为非交易时间
+ * 交易时间为:
+ * 1. 上午9:30-11:30
+ * 2. 下午13:00-15:00
+ * @return true表示非交易时间，false表示交易时间
+ */
+function boolean isNotTradingHours() {
+    // 测试
+    return false;
+    /**
+    // 获取当前时间
+    LocalDateTime now = LocalDateTime.now();
+    int hour = now.getHour();
+    int minute = now.getMinute();
+    
+    // 判断是否在上午交易时段
+    boolean isMorningSession = (hour == 9 && minute >= 30) || 
+                             (hour == 10) || 
+                             (hour == 11 && minute <= 30);
+    // 判断是否在下午交易时段
+    boolean isAfternoonSession = (hour >= 13 && hour < 15);
+    
+    // 返回是否为非交易时间
+    return !(isMorningSession || isAfternoonSession);
+    */
+}

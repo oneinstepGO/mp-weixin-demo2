@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: rule-engine-demo
+
+server:
+  port: 9090
+
+nacos:
+  config:
+    server-addr: localhost:8848
+    namespace: rule-engine
+
+logging:
+  level:
+    com.oneinstep.rule: DEBUG
+    org.drools: DEBUG
+
+rule:
+  log:
+    log-dir: ./logs
+    execution-log-file: rule-execution.log
+    update-log-file: rule-update.log

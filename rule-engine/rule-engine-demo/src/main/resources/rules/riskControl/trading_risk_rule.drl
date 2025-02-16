@@ -1,0 +1,132 @@
+package rules.riskControl;
+
+import com.oneinstep.rule.demo.model.trade.Account;
+import com.oneinstep.rule.demo.model.trade.Order;
+import com.oneinstep.rule.demo.model.trade.RiskCheckResult;
+
+/**
+ * 单笔交易金额限制规则
+ * 根据账户级别设置不同的交易限额：
+ * - 普通账户: 10万
+ * - 黄金账户: 50万
+ * - 钻石账户: 100万
+ * 
+ * salience=100 优先级最高，最先检查
+ * no-loop true 防止规则重复触发
+ */
+rule "single_trade_amount_limit"
+    salience 100
+    no-loop true
+when
+    // 匹配订单对象
+    $order: Order()
+    // 匹配对应的账户，通过accountId关联
+    $account: Account(
+        id == $order.accountId
+    )
+    // 匹配结果对象，只处理尚未失败的检查
+    $result: RiskCheckResult(passed == true)
+then
+    // 根据账户级别设置交易限额
+    double limit = 0;
+    String level = $account.getLevel();
+    if ("普通账户".equals(level)) {
+        limit = 100000;  // 10万
+    } else if ("黄金账户".equals(level)) {
+        limit = 500000;  // 50万
+    } else if ("钻石账户".equals(level)) {
+        limit = 1000000; // 100万
+    }
+    
+    // 检查是否超限，如果超限添加违规信息
+    if ($order.getAmount() > limit) {
+        $result.addViolation("单笔交易金额超限",
+            String.format("账户级别=%s, 限额=%.2f, 当前交易金额=%.2f",
+                $account.getLevel(), limit, $order.getAmount()));
+    }
+end
+
+/**
+ * 当日累计交易次数限制规则
+ * 限制单个账户每日最大交易次数为50次
+ * 防止过度交易，控制交易风险
+ * 
+ * salience=90 优先级次之
+ */
+rule "daily_trade_count_limit"
+    salience 90
+when
+    // 匹配订单对象
+    $order: Order()
+    // 匹配账户，并检查当日交易次数是否达到50次
+    $account: Account(
+        id == $order.accountId,
+        dailyTradeCount >= 50  // 每日最多50笔交易
+    )
+    // 只处理尚未失败的检查
+    $result: RiskCheckResult(passed == true)
+then
+    // 添加违规信息，包含账户ID、最大次数限制和当前交易次数
+    $result.addViolation("当日交易次数超限",
+        String.format("账户=%s, 最大次数=%d, 当日已交易次数=%d",
+            $account.getId(), 50, $account.getDailyTradeCount()));
+end
+
+/**
+ * 股票集中度风险控制规则
+ * 控制单只股票的持仓比例不超过30%
+ * 防止持仓过于集中，分散投资风险
+ * 
+ * salience=80 优先级再次之
+ */
+rule "stock_concentration_risk"
+    salience 80
+when
+    // 只检查买入订单
+    $order: Order(type == "BUY")
+    // 匹配对应的账户
+    $account: Account(
+        id == $order.accountId
+    )
+    // 只处理尚未失败的检查
+    $result: RiskCheckResult(passed == true)
+    // 检查股票持仓集中度是否超过30%
+    eval($account.getStockConcentration($order.getStockCode()) > 0.3)
+then
+    // 添加违规信息，包含股票代码、最大持仓比例限制和当前持仓比例
+    $result.addViolation("股票持仓集中度过高",
+        String.format("股票=%s, 单只股票最大持仓比例=30%%, 当前持仓比例=%.2f%%",
+            $order.getStockCode(),
+            $account.getStockConcentration($order.getStockCode()) * 100));
+end
+
+/**
+ * 资金使用率风险控制规则
+ * 单笔委托金额不超过可用资金的80%
+ * 防止资金使用过于激进，预留流动性
+ * 
+ * salience=70 优先级最低
+ */
+rule "fund_usage_risk"
+    salience 70
+when
+    // 只检查买入订单
+    $order: Order(type == "BUY")
+    // 匹配对应的账户
+    $account: Account(
+        id == $order.accountId
+    )
+    // 只处理尚未失败的检查
+    $result: RiskCheckResult(passed == true)
+then
+    // 计算委托金额和可用资金比例
+    double orderAmount = $order.getAmount();
+    double availableBalance = $account.getBalance();
+    
+    // 检查是否超过可用资金的80%
+    if (orderAmount > availableBalance * 0.8) {
+        $result.addViolation("资金使用率过高",
+            String.format("委托金额=%.2f, 占可用资金比例=%.2f%%",
+                orderAmount, orderAmount / availableBalance * 100));
+    }
+end 
